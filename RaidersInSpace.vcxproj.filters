@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\random.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\world.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\resourceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\options.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\shoot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\asteroid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\collision.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\enemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\configuration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\powerUp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\random.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resourceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\world.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\options.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shoot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\asteroid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\collision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enemy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\configuration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\powerUp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\player\player3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\player\player2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\player\player1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\bg-preview-big.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\projectiles\shoot1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\projectiles\shoot2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\bg-stars.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\sparks.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\projectiles\flash.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\asteroid\asteroid-small.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\asteroid\asteroid.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\enemy\enemy.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\projectiles\enemy-shot1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\projectiles\enemy-shot2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\Space_Background3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\buttons\2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\buttons\3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\buttons\1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\effects\hit.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\teleport\teleport.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="resources\projectiles\shot1.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="resources\projectiles\shot2.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="resources\music\mainMenu.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="resources\enemy\LaserGun.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="resources\enemy\LaserGun2.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="resources\fonts\ARCADECLASSIC.TTF" />
+    <Font Include="resources\fonts\GalacticaGrid.ttf" />
+  </ItemGroup>
+</Project>
