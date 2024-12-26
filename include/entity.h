@@ -20,7 +20,9 @@ public:
 		EnemyBullet,
 		SmallAsteroid,
 		BigAsteroid,
-		Enemy
+		Enemy,
+		Boss,
+		PowerUP
 	};
 
 	Entity(ResourceManager::Texture textureID, Type type, World& world, unsigned int healthMax, unsigned int currentHealth);
@@ -73,12 +75,13 @@ protected:
 	friend class Bullet;
 	friend class Enemy;
 	friend class PowerUP;
+	friend class Boss;
 
 	float acceleration = 0.f, movementSpeed = 500.f, angle = 0;
 	sf::Vector2f velocity = { 0.f,0.f }, friction = { 0.f,0.f };
 
 	sf::IntRect hitAnimation, explosionAnimation;
-	sf::Clock toFlipHit, toFlipExplode;
+	sf::Clock toFlipHit, toFlipExplode, oneSecondImmnunity;
 	sf::Sprite sprite, hit, explosion;
     sf::Vector2u spriteSize;
 	sf::Sound hitSound ,explosionSound;
@@ -88,14 +91,16 @@ protected:
 
 	int healthMax,currentHealth;
 
+	bool immunity;
+	
+
 private:
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };
 
-#endif
 
 /*
-	
+
 
 	const sf::Sprite& GetSprite() const;
 
@@ -104,10 +109,13 @@ private:
 
 
 	protected
-    friend class Meteor;
+	friend class Meteor;
 	friend class Player;
 	friend class Saucer;
 	friend class PlayerShot;
 	friend class EnemyShot;
 
 */
+
+#endif
+

@@ -28,6 +28,10 @@
 
 		void playerReady();
 
+		void bossDies();
+
+		bool isVictory;
+
 		int getWidth() const;
 		int getHeight() const;
 		unsigned int getScore() const;
@@ -56,6 +60,7 @@
 		bool playerIsAppearing;
 
 		Entity* player;
+
 
 		sf::SoundBuffer& explosionSoundBuffer;
 

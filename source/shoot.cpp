@@ -1,6 +1,6 @@
 #include"../include/shoot.h"
 
-Shoot::Shoot(World& world, sf::Vector2f position, sf::Vector2f shootDirection, float angle, bool isPlayer, bool isBigShoot) : 
+Shoot::Shoot(World& world, sf::Vector2f position, sf::Vector2f shootDirection, float angle, bool isPlayer, bool isBoss, bool isBigShoot) : 
     Entity(ResourceManager::Texture::ShootSmall, Type::PlayerBullet, world, 1,1), direction(shootDirection)
 {
     if (!isPlayer)
@@ -15,8 +15,12 @@ Shoot::Shoot(World& world, sf::Vector2f position, sf::Vector2f shootDirection, f
     else if (isBigShoot)
         changeTexture(ResourceManager::Texture::ShootBig);
 
+    if (isBoss)
+    {
+        sprite.setScale(2,2);
+    }
     
-
+  
     movementSpeed = 400.f;
 
     sprite.setPosition(position);
@@ -52,6 +56,10 @@ void Shoot::onCollide(Entity& other)
     case Type::Player:
         if (type != Type::PlayerBullet)
             toRemove = true;
+        break;
+    case Type::Boss:
+        if (type != Type::EnemyBullet)
+            toRemove = true;    
         break;
     default:
         break;

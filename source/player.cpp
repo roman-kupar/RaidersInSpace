@@ -56,7 +56,7 @@ void Player::shoot()
 	showFlash = true;
 
 	int isBig = Random::GenerateInt(0, 1);
-	std::unique_ptr<Shoot> shoot_ptr = std::make_unique<Shoot>(world, shootPosition, shootDirection, angle, true, static_cast<bool>(isBig));
+	std::unique_ptr<Shoot> shoot_ptr = std::make_unique<Shoot>(world, shootPosition, shootDirection, angle, true, false, static_cast<bool>(isBig));
 	world.add(std::move(shoot_ptr));
 
 	flashTimer.restart();
@@ -150,9 +150,33 @@ void Player::changeHealthPicture()
 {
 	if (previousHealth!=currentHealth)
 	{
-		healthAnimation.left += healthAnimation.width;
+		//healthAnimation.left += healthAnimation.width;
+
+		switch (currentHealth)
+		{
+		case 5:
+			health.setTextureRect({0,0,17,17});
+			break;
+		case 4:
+			health.setTextureRect({ 17,0,17,17 });
+			break;
+		case 3:
+			health.setTextureRect({ 34,0,17,17 });
+			break;
+		case 2:
+			health.setTextureRect({ 51,0,17,17 });
+			break;
+		case 1:
+			health.setTextureRect({ 68,0,17,17 });
+			break;
+		case 0:
+			health.setTextureRect({ 85,0,17,17 });
+			break;
+		default:
+			break;
+		}
+
 		previousHealth = currentHealth;
-		health.setTextureRect(healthAnimation);
 	}
 }
 
@@ -160,10 +184,16 @@ void Player::onCollide(Entity& other)
 {
 	switch (other.getType())
 	{
-	case Type::SmallAsteroid: case Type::EnemyBullet: case Type::BigAsteroid:
+	case Type::SmallAsteroid: case Type::EnemyBullet: case Type::BigAsteroid: case Type::Boss:
 		//toRemove = true;
-		std::cout << currentHealth;
+		//std::cout << currentHealth;
 		hited = true;
+		break;
+	case Type::PowerUP:
+		if (this->currentHealth < 5) {
+			this->currentHealth++;
+			changeHealthPicture();
+		}
 		break;
 	default:
 		break;
@@ -186,6 +216,7 @@ void Player::update(float deltaTime)
 		break;
 	case true:
 		appear(deltaTime);
+		break;
 	}
 
 }

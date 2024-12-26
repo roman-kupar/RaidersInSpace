@@ -7,11 +7,15 @@ const unsigned int EXPONENTIAL_FACTOR = 2;
 const float INCREASE_RATE = 185.0f;
 
 Game::Game() : width(Options::width), height(Options::height), world(Options::width, Options::height), buttonSize(Options::width/9.f,Options::height/9.f), configuration(world),
-textMovementSpeed(1), introState(IntroState::PlayerAnimate)
+textMovementSpeed(1), introState(IntroState::PlayerAnimate), gameState(GameState::StartScreen)
 {
     initWindow();
     initFonts();
     initMainMenu();
+    initGameStart();
+    initGameOver();
+    initVictoryScreen();
+    initGameHUD();
 }
 
 void Game::initMainMenu() {
@@ -169,6 +173,17 @@ void Game::initGameHUD()
     sf::FloatRect levelTextRect = levelText.getLocalBounds();
     levelText.setOrigin(levelTextRect.left + levelTextRect.width / 2.0f, levelTextRect.top + levelTextRect.height / 2.0f);
     levelText.setPosition(world.getWidth() / 2, 20.f);
+
+    gameTimeText.setFont(font);
+    gameTimeText.setCharacterSize(width / 50);
+    gameTimeText.setFillColor(sf::Color::White);
+    gameTimeText.setLetterSpacing(1.5);
+    gameTimeText.setOutlineColor(sf::Color::Black);
+    gameTimeText.setOutlineThickness(2);
+    gameTimeText.setString("Time: " + std::to_string(static_cast<int>(totalTime.getElapsedTime().asSeconds())));
+    sf::FloatRect gameTimeTextRect = gameTimeText.getLocalBounds();
+    gameTimeText.setOrigin(gameTimeTextRect.left + gameTimeTextRect.width / 2.0f, gameTimeTextRect.top + gameTimeTextRect.height / 2.0f);
+    gameTimeText.setPosition((levelText.getPosition().x-scoreText.getPosition().x)/2, 20.f);
 }
 
 void Game::initMouse()
@@ -249,7 +264,67 @@ void Game::initGameOver()
         gameOverTextRect.top + gameOverTextRect.height / 2.0f);
 
     gameOverText.setPosition(width / 2, height / 2);
-    std::cout << " " << gameOverText.getPosition().x << " " << gameOverText.getPosition().y;
+    fadingTime.restart();
+}
+
+//void Game::resetGameOverTextPosition()
+//{
+//    std::cout << " " << width << " " << height << " ";
+//    gameOverText.setPosition(width / 2, height / 2);
+//}
+
+void Game::initVictoryScreen()
+{
+    //const sf::Vector2f windowSize = { float(width), float(height) };
+    //screenFading.setSize(windowSize);
+    //screenFading.setOrigin(0.f, 0.f);
+    //screenFading.setPosition(0.f, 0.f);
+    //screenFading.setFillColor(sf::Color(0, 0, 0, 0));
+
+    victoryText.setFont(font);
+    victoryText.setCharacterSize(width / 20);
+    victoryText.setFillColor(sf::Color::Blue);
+    victoryText.setLetterSpacing(2);
+    victoryText.setOutlineColor(sf::Color::Yellow);
+    victoryText.setOutlineThickness(4);
+    victoryText.setString("VICTORY!");
+
+    sf::FloatRect victoryTextRect = victoryText.getGlobalBounds();
+
+    victoryText.setOrigin(victoryTextRect.left + victoryTextRect.width / 2.0f,
+        victoryTextRect.top + victoryTextRect.height / 2.0f);
+
+    victoryText.setPosition(width / 2 , height / 2 - 100.f);
+
+    totalScoreText.setFont(font);
+    totalScoreText.setCharacterSize(width / 40);
+    totalScoreText.setFillColor(sf::Color::Blue);
+    totalScoreText.setLetterSpacing(2);
+    totalScoreText.setOutlineColor(sf::Color::Yellow);
+    totalScoreText.setOutlineThickness(4);
+    totalScoreText.setString("Total score: " + std::to_string(static_cast<int>(totalScore)));
+
+    sf::FloatRect scoreTextRect = totalScoreText.getGlobalBounds();
+
+    totalScoreText.setOrigin(scoreTextRect.left + scoreTextRect.width / 2.0f,
+        scoreTextRect.top + scoreTextRect.height / 2.0f);
+
+    totalScoreText.setPosition(width / 2 - 50.f, height / 2 - 50.f);
+
+    totalTimeText.setFont(font);
+    totalTimeText.setCharacterSize(width / 40);
+    totalTimeText.setFillColor(sf::Color::Blue);
+    totalTimeText.setLetterSpacing(2);
+    totalTimeText.setOutlineColor(sf::Color::Yellow);
+    totalTimeText.setOutlineThickness(4);
+    totalTimeText.setString("Total time:  " + std::to_string(static_cast<int>(totalTimeResult)));
+
+    sf::FloatRect timeTextRect = totalTimeText.getGlobalBounds();
+
+    totalTimeText.setOrigin(timeTextRect.left + timeTextRect.width / 2.0f,
+        timeTextRect.top + timeTextRect.height / 2.0f);
+
+    totalTimeText.setPosition(width / 2 - 50.f, height / 2);
     fadingTime.restart();
 }
 
@@ -264,12 +339,28 @@ void Game::updateMouse()
 void Game::returnToStartScreen()
 {
     gameState = GameState::StartScreen;
+    //resetGameOverTextPosition();
     configuration.reset();
     backGroundMusic.stop();
     mainTheme.play();
     mainTheme.setVolume(1);
     mainTheme.setLoop(true);
     window.setMouseCursorVisible(true);
+}
+
+void Game::renderVictory()
+{
+    window.clear(sf::Color::Black);
+
+    window.draw(screenFading);
+
+    window.draw(victoryText);
+
+    window.draw(totalScoreText);
+
+    window.draw(totalTimeText);
+
+    window.display();
 }
 
 void Game::pollEvents()
@@ -313,10 +404,15 @@ void Game::update(float deltaTime)
 {
     scoreText.setString("Score: " + std::to_string(world.getScore()));
     levelText.setString("Level: " + std::to_string(static_cast<int>(configuration.currentLevel) + 1));
+    gameTimeText.setString("Time: " + std::to_string(static_cast<int>(totalTime.getElapsedTime().asSeconds())));
     updateMouse();
     world.update(deltaTime);
     if (world.isPlayerDead())
+    {
+        fadingTime.restart();
+        //resetGameOverTextPosition();
         gameState = GameState::GameOver;
+    }
 }
 
 void Game::updateOverScreen(float deltaTime)
@@ -324,34 +420,47 @@ void Game::updateOverScreen(float deltaTime)
     if (backGroundMusic.getStatus() == sf::Music::Playing)
         backGroundMusic.stop();
 
-    if (fadingTime.getElapsedTime().asSeconds() > 0.01f && screenFading.getFillColor().a < 255 && gameOverText.getPosition().x < width + gameOverText.getGlobalBounds().width)
-    {
-        int i = screenFading.getFillColor().a;
-        screenFading.setFillColor(sf::Color(0, 0, 0, i + 5));
-        fadingTime.restart();
-    }
-    else if (screenFading.getFillColor().a >= 255 && fadingTime.getElapsedTime().asSeconds() > 1.5f && gameOverText.getPosition().y >= 50.f)
-    {
-        gameOverText.move({ 0.f,-4.f });
-        //std::cout << " " << gameOverText.getPosition().x << " " << gameOverText.getPosition().y << "\n ";
-    }
-    else if (fadingTime.getElapsedTime().asSeconds() > 5.f && gameOverText.getPosition().y <= 50.f && gameOverText.getPosition().x < width + gameOverText.getGlobalBounds().width)
-    {
-        gameOverText.move({ 8.f,0.f });
-    }
-    else if (fadingTime.getElapsedTime().asSeconds() > 0.01f && screenFading.getFillColor().a > 0 && gameOverText.getPosition().x > width + gameOverText.getGlobalBounds().width)
-    {
-        updateBack(deltaTime);
-        int i = screenFading.getFillColor().a;
-        i-=5;
-        screenFading.setFillColor(sf::Color(0, 0, 0, i));
-        fadingTime.restart();
-    }
-    else if (screenFading.getFillColor().a == 0 && gameOverText.getPosition().x > width + gameOverText.getGlobalBounds().width)
-    {
+    if (fadingTime.getElapsedTime().asSeconds() > 6.f)
         returnToStartScreen();
-    }
+
+    updateBack(deltaTime);
+
+    //if (fadingTime.getElapsedTime().asSeconds() > 0.01f && screenFading.getFillColor().a < 255 && gameOverText.getPosition().x < width + gameOverText.getGlobalBounds().width)
+    //{
+    //    int i = screenFading.getFillColor().a;
+    //    screenFading.setFillColor(sf::Color(0, 0, 0, i + 5));
+    //    fadingTime.restart();
+    //}
+    //else if (screenFading.getFillColor().a >= 255 && fadingTime.getElapsedTime().asSeconds() > 1.5f && gameOverText.getPosition().y >= 50.f)
+    //{
+    //    gameOverText.move({ 0.f,-4.f });
+    //}
+    //else if (fadingTime.getElapsedTime().asSeconds() > 5.f && gameOverText.getPosition().y <= 50.f && gameOverText.getPosition().x < width + gameOverText.getGlobalBounds().width)
+    //{
+    //    //gameOverText.move({ 8.f,0.f });
+    //    returnToStartScreen();
+
+    //}
+    //else if (fadingTime.getElapsedTime().asSeconds() > 0.01f && screenFading.getFillColor().a > 0 && gameOverText.getPosition().x > width + gameOverText.getGlobalBounds().width)
+    //{
+    //    updateBack(deltaTime);
+    //    int i = screenFading.getFillColor().a;
+    //    i -= 5;
+    //    screenFading.setFillColor(sf::Color(0, 0, 0, i));
+    //    fadingTime.restart();
+    //}
+    //else if (screenFading.getFillColor().a == 0 && gameOverText.getPosition().x > width + gameOverText.getGlobalBounds().width)
+    //{
+    //    returnToStartScreen();
+    //}
 }
+
+void Game::handleVictoryScreen(float deltaTime)
+{
+    updateOverScreen(deltaTime);
+    renderVictory();
+}
+
 
 void Game::updateBack(float deltaTime)
 {
@@ -501,6 +610,7 @@ void Game::render()
     window.draw(world);
     window.draw(scoreText);
     window.draw(levelText);
+    window.draw(gameTimeText);
     window.draw(mouseSprite);
     window.display();
 }
@@ -546,34 +656,40 @@ void Game::renderIntro()
 
 void Game::renderGameOver()
 {
-    window.clear(sf::Color::White);
+    window.clear(sf::Color::Black);
 
-    if (gameOverText.getPosition().x < width+gameOverText.getGlobalBounds().width)
-        window.draw(world);
-    else
-    {   
-        window.draw(backgroundSprite);
+    //if (gameOverText.getPosition().x < width+gameOverText.getGlobalBounds().width)
+    //    window.draw(world);
+    //else
+    //{   
+    //    window.draw(backgroundSprite);
 
-        for (const auto& star : stars)
-            window.draw(*star);
-        for (const auto& asteroid : asteroids)
-            window.draw(*asteroid);
+    //    for (const auto& star : stars)
+    //        window.draw(*star);
+    //    for (const auto& asteroid : asteroids)
+    //        window.draw(*asteroid);
 
-        window.draw(title);
-        window.draw(playButton);
-        window.draw(optionsButton);
-        window.draw(exitButton);
-        window.draw(playText);
-        window.draw(optionsText);
-        window.draw(exitText);
-    }
+    //    window.draw(title);
+    //    window.draw(playButton);
+    //    window.draw(optionsButton);
+    //    window.draw(exitButton);
+    //    window.draw(playText);
+    //    window.draw(optionsText);
+    //    window.draw(exitText);
+    //}
 
     window.draw(screenFading);
 
-    if (screenFading.getFillColor().a>=255)
-        window.draw(gameOverText);
+    window.draw(gameOverText);
 
     window.display();
+}
+
+void Game::resetIntro()
+{
+    readyText.setPosition(width / 2, height / 2);
+    setText.setPosition(width / 2, height / 2);
+    goText.setPosition(width / 2, height / 2);
 }
 
 void Game::handleEvents() {
@@ -630,9 +746,7 @@ void Game::handleEvents() {
                     acceptButtonSound.play();
 
                 initMouse();
-                initGameStart();
-                initGameHUD();
-                initGameOver();
+                
 
                 configuration.loadPlayer(window);
 
@@ -658,9 +772,9 @@ void Game::handleEvents() {
 
 void Game::handleIntro(float deltaTime)
 {
-    pollEvents();
     update(deltaTime);
     updateIntro(deltaTime);
+    pollEvents();
     renderIntro();
 }
 
@@ -679,7 +793,7 @@ void Game::handleGameOverScreen(float deltaTime)
 bool Game::checkEnemiesAlive()
 {
     for (const auto& entity : world.getEntities()) {
-        if (entity->getType() == Entity::Type::Enemy || entity->getType() == Entity::Type::SmallAsteroid || entity->getType() == Entity::Type::BigAsteroid) {
+        if ((entity->getType() == Entity::Type::Enemy || entity->getType() == Entity::Type::SmallAsteroid || entity->getType() == Entity::Type::BigAsteroid) && ((entity.get()->getPosition().x > 0 && entity.get()->getPosition().x < width) && (entity.get()->getPosition().y > 0 && entity.get()->getPosition().y < height))) {
             return true;
         }
     }
@@ -692,7 +806,7 @@ void Game::isLevelCompleted()
     switch (configuration.currentLevel)
     {
     case Configuration::Level::Level1:
-        if (Level1Time.getElapsedTime().asSeconds() > 60)
+        if (Level1Time.getElapsedTime().asSeconds() > 30.f)
         {
             if (!checkEnemiesAlive())
             {
@@ -703,7 +817,7 @@ void Game::isLevelCompleted()
         }
         break;
     case Configuration::Level::Level2:
-        if (Level2Time.getElapsedTime().asSeconds() > 15.f)
+        if (Level2Time.getElapsedTime().asSeconds() > 45.f)
         {
             if (!checkEnemiesAlive())
             {
@@ -711,6 +825,49 @@ void Game::isLevelCompleted()
                 configuration.clearLevel();
                 handleLoading();
             }
+        }
+        break;
+    case Configuration::Level::Level3:
+        if (Level3Time.getElapsedTime().asSeconds() > 45.f)
+        {
+            if (!checkEnemiesAlive())
+            {
+                configuration.proceed();
+                configuration.clearLevel();
+                handleLoading();
+            }
+        }
+        break;
+    case Configuration::Level::Level4:
+        if (Level4Time.getElapsedTime().asSeconds() > 30.f)
+        {
+            if(!checkEnemiesAlive())
+            {
+                configuration.proceed();
+                configuration.clearLevel();
+                handleLoading();
+            }
+        }
+        break;
+    case Configuration::Level::Level5:
+        if (world.isVictory)
+        {
+            if (victoryCountDown.getElapsedTime().asSeconds() >= 2.f)
+            {
+                gameState = GameState::Victory;
+                totalScore = world.getScore();
+                totalTimeResult = totalTime.getElapsedTime().asSeconds();
+
+                totalScoreText.setString("Total score: " + std::to_string(static_cast<int>(totalScore)));
+                totalTimeText.setString("Total time:  " + std::to_string(static_cast<int>(totalTimeResult)));
+
+                fadingTime.restart();
+
+            }
+        }
+        else 
+        {
+            victoryCountDown.restart();
         }
         break;
     }
@@ -721,6 +878,7 @@ void Game::handleLoading()
     switch (configuration.currentLevel)
     {
     case Configuration::Level::Level1:
+        totalTime.restart();
         configuration.loadLevel1();
         Level1Time.restart();
         break;
@@ -728,7 +886,20 @@ void Game::handleLoading()
         configuration.loadLevel2();
         Level2Time.restart();
         break;
+    case Configuration::Level::Level3:
+        configuration.loadLevel3();
+        Level3Time.restart();
+        break;
+    case Configuration::Level::Level4:
+        configuration.loadLevel4();
+        Level4Time.restart();
+        break;
+    case Configuration::Level::Level5:
+        configuration.loadLevel5();
+        Level5Time.restart();
+        break;
     }
+
     gameState = GameState::Playing;
     backGroundMusic.play();
     backGroundMusic.setLoop(true);
@@ -766,6 +937,9 @@ void Game::run() {
             break;
         case GameState::GameOver:
             handleGameOverScreen(deltaTime);
+            break;
+        case GameState::Victory:
+            handleVictoryScreen(deltaTime);
             break;
         case GameState::Exiting:
             window.close();

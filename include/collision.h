@@ -11,6 +11,7 @@ public:
 
 	static bool CheckCircleCollision(const sf::Sprite& first, const sf::Sprite& second);
 	static void resolveCollision(Entity& first, Entity& second);
+
 };
 
 #endif

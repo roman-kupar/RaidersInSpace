@@ -1,8 +1,8 @@
 #include<iostream>
 #include"../include/enemy.h"
-Enemy::Enemy(World& world, const sf::Vector2f& point) :
+Enemy::Enemy(World& world, const sf::Vector2f& point, bool createdByBoss) :
 	Entity(ResourceManager::Texture::Enemy, Type::Enemy, world, 2, 2), enemyAnimation(0,0,29,29), teleportAnimation(0,0,34,34), animationON(false), isTeleporting(true), 
-	toPlayTeleportSound(true), toPlayShotSound(true)
+	toPlayTeleportSound(true), toPlayShotSound(true), createdByBoss(createdByBoss)
 
 	//shotSoundBuffer1(ResourceManager::sounds.at(ResourceManager::Sound::EnemyShot1)),
 	//shotSoundBuffer2(ResourceManager::sounds.at(ResourceManager::Sound::EnemyShot2))
@@ -35,6 +35,7 @@ Enemy::Enemy(World& world, const sf::Vector2f& point) :
 
 	world.add(std::make_unique<Enemy>(*this));
 
+
 	movementSpeed = 0.1f;
 
 
@@ -62,13 +63,21 @@ void Enemy::update(float deltaTime)
 		animateTeleportation();
 		break;
 	case false:
-		moveTowardsTarget(deltaTime);
+		if (createdByBoss)
+			moveTowardsPoint({ -300.f, getPosition().y}, deltaTime);
+		else
+			moveTowardsTarget(deltaTime);
+
 		act();
 		whenHit();
 		onDestroy();
 		break;
 	}
 	
+	if (getPosition().x < -200.f)
+	{
+		toRemove = true;
+	}
 }
 
 void Enemy::act()
@@ -111,6 +120,26 @@ void Enemy::moveTowardsTarget(float deltaTime)
 
 }
 
+void Enemy::moveTowardsPoint(const sf::Vector2f& targetPoint, float deltaTime)
+{
+	sf::Vector2f direction = targetPoint - sprite.getPosition();
+	float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+
+	if (length > 0)
+	{
+		direction.x /= length;
+		direction.y /= length;
+
+		angle = std::atan2(direction.y, direction.x) * (180 / M_PI);
+		angle += 180; 
+		sprite.setRotation(angle);
+
+		float adjustedSpeed = movementSpeed * 0.5f;
+		sprite.move(direction * adjustedSpeed * deltaTime);
+	}
+}
+
+
 void Enemy::shoot()
 {
 	if (flipCounter >= 5)
@@ -124,7 +153,7 @@ void Enemy::shoot()
 		shootFromWing = -shootFromWing;
 		int isBig = Random::GenerateInt(0, 1);
 
-		std::unique_ptr<Shoot> shoot_ptr = std::make_unique<Shoot>(world, shootPosition, -shootDirection, angle, false, static_cast<bool>(isBig));
+		std::unique_ptr<Shoot> shoot_ptr = std::make_unique<Shoot>(world, shootPosition, -shootDirection, angle, false, false, static_cast<bool>(isBig));
 
 		world.add(std::move(shoot_ptr));
 
@@ -170,7 +199,6 @@ void Enemy::animateTeleportation()
 		if (toPlayTeleportSound)
 		{
 			teleportSound.play();
-			std::cout << "playing";
 			toPlayTeleportSound = false;
 		}
 

@@ -17,6 +17,7 @@ private:
 		Intro,
 		Playing,
 		GameOver,
+		Victory,
 		Exiting
 	};
 
@@ -48,7 +49,9 @@ private:
 	sf::Sprite	backgroundSprite, mouseSprite;
 	
 	sf::Font font;
-	sf::Text title, playText, optionsText, exitText, readyText, setText, goText, scoreText, levelText, gameOverText;
+	sf::Text title, playText, optionsText, exitText, readyText, setText, goText, scoreText, levelText, 
+		gameOverText, gameTimeText, victoryText,
+		totalScoreText, totalTimeText;
 
 	sf::RectangleShape playButton;
 	sf::RectangleShape optionsButton;
@@ -63,10 +66,14 @@ private:
 
 	sf::Clock asteroidTimer, playerAnimating;
 	sf::Clock fadingTime;
-	sf::Clock Level1Time, Level2Time, Level3Time;
+	sf::Clock totalTime, Level1Time, Level2Time, Level3Time, Level4Time, Level5Time;
+	sf::Clock victoryCountDown;
 
 	std::list<std::unique_ptr<sf::Sprite>> stars;
 	std::list<std::unique_ptr<sf::Sprite>> asteroids;
+
+	unsigned int totalTimeResult = 0;
+	unsigned int totalScore = 0;
 
 public:
 	Game();
@@ -78,6 +85,7 @@ public:
 	void initGameStart();
 	void initGameHUD();
 	void initGameOver();	
+	void initVictoryScreen();
 	void initMouse();
 	void handleEvents();
 	void handleStartScreen(float deltaTime);
@@ -85,16 +93,20 @@ public:
 	void handleIntro(float deltaTime);
 	void handlePlaying(float deltaTime);
 	void handleGameOverScreen(float deltaTime);
+	void handleVictoryScreen(float deltaTime);
 	void updateIntro(float deltaTime);
 	void updateOverScreen(float deltaTime);
 	void updateBack(float deltaTime);
 	void updateMouse();
 	void update(float deltaTime);
 	void render();
+	void resetIntro();
 	void renderIntro();
 	void renderMainMenu();
 	void renderGameOver();
+	void renderVictory();
 	void returnToStartScreen();
+	//void resetGameOverTextPosition();
 	void pollEvents();
 	void isLevelCompleted();
 	bool checkEnemiesAlive();

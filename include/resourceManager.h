@@ -30,7 +30,8 @@ public:
 		Explosion,
 		Health,
 		Teleport,
-		Cross
+		Cross,
+		PowerUP
 	};
 
 	enum class Sound

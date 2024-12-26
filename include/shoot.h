@@ -9,7 +9,7 @@ class Shoot : public Entity
 private:
 	sf::Vector2f direction;
 public:
-	Shoot(World& world, sf::Vector2f position, sf::Vector2f shootDirection, float angle, bool isPlayer, bool isBigShoot);
+	Shoot(World& world, sf::Vector2f position, sf::Vector2f shootDirection, float angle, bool isPlayer, bool isBoss, bool isBigShoot);
 
 	void update(float deltaTime) override;
 

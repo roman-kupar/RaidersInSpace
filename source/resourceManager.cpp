@@ -15,7 +15,8 @@ void ResourceManager::initializeTextures()
 		health, 
 		teleport, 
 		assets,
-		cross;
+		cross,
+		powerUP;
 
 	if (!player.loadFromFile("resources/player/player1.png") ||
 		!backgroud.loadFromFile("resources/bg-preview-big.png") ||
@@ -33,10 +34,12 @@ void ResourceManager::initializeTextures()
 		!explosion.loadFromFile("resources/effects/explosion.png") ||
 		!health.loadFromFile("resources/health/animated/border/heart_animated_2.png") ||
 		!teleport.loadFromFile("resources/teleport/teleport.png") ||
-		!cross.loadFromFile("resources/assets/crossair1.png"))
+		!cross.loadFromFile("resources/assets/crossair1.png") ||
+		!powerUP.loadFromFile("resources/health/basic/heart.png"))
 		std::cout << "Unable to load images";
 	
 	player.setSmooth(true);
+	//enemy.setSmooth(true);
 
 	textures.insert(std::make_pair(Texture::PlayerShip,player));
 	textures.insert(std::make_pair(Texture::BackgroundImage,backgroud));
@@ -55,7 +58,7 @@ void ResourceManager::initializeTextures()
 	textures.insert(std::make_pair(Texture::Health, health));
 	textures.insert(std::make_pair(Texture::Teleport, teleport));
 	textures.insert(std::make_pair(Texture::Cross, cross));
-
+	textures.insert(std::make_pair(Texture::PowerUP, powerUP));
 }
 
 void ResourceManager::initializeSounds()
