@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\boss.cpp" />
     <ClCompile Include="source\asteroid.cpp" />
     <ClCompile Include="source\collision.cpp" />
     <ClCompile Include="source\configuration.cpp" />
@@ -151,6 +152,7 @@
     <ClCompile Include="source\world.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\boss.h" />
     <ClInclude Include="include\asteroid.h" />
     <ClInclude Include="include\collision.h" />
     <ClInclude Include="include\configuration.h" />

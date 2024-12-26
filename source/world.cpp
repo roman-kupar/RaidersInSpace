@@ -3,7 +3,7 @@
 
 World::World(unsigned int width, unsigned int height)
 	: width(width), height(height), sparkAnimation(30,45,69, 69), sparkIterator(0),	explosionSoundBuffer(ResourceManager::sounds.at(ResourceManager::Sound::Explosion)),
-	currentSoundIndex(0), playerIsAppearing(true), score(0)
+	currentSoundIndex(0), playerIsAppearing(true), score(0), isVictory(false)
 
 {	
 	explosionSound.setBuffer(explosionSoundBuffer);
@@ -161,15 +161,26 @@ void World::checkCollision()
 			Entity& entity1 = *(*it1);
 			Entity& entity2 = *(*it2);
 
+			//if (entity1.getType() == Entity::Type::Boss || entity2.getType() == Entity::Type::Boss)
+			//	continue;
+
+			if ((entity1.getType() == Entity::Type::Boss && entity2.getType() == Entity::Type::Enemy) 
+				|| (entity1.getType() == Entity::Type::Enemy && entity2.getType() == Entity::Type::Boss))
+				continue;
+			
 			if (Collision::CheckCircleCollision(entity1.getSprite(), entity2.getSprite()))
 			{
 				entity1.onCollide(entity2);
 				entity2.onCollide(entity1);
 
+				if (entity1.getType() == Entity::Type::PowerUP || entity2.getType() == Entity::Type::PowerUP)
+					continue;
+
 				Collision::resolveCollision(entity1, entity2);
 			}
 		}
 	}
+
 }
 
 void World::playerReady()
@@ -258,7 +269,8 @@ void World::checkEntityOutOfBounds(Entity& entity) const
 
 	sf::Vector2f position = entity.getPosition();
 
-	if (entity.getType() == Entity::Type::BigAsteroid || entity.getType() == Entity::Type::SmallAsteroid)
+	if (entity.getType() == Entity::Type::BigAsteroid || entity.getType() == Entity::Type::SmallAsteroid || entity.getType() == Entity::Type::Boss 
+		|| entity.getType() == Entity::Type::Enemy || entity.getType() == Entity::Type::PowerUP)
 		return;
 
 	if (position.x < 0)
@@ -272,6 +284,11 @@ void World::checkEntityOutOfBounds(Entity& entity) const
 		position.y = 0;
 
 	entity.setPosition(position);
+}
+
+void World::bossDies()
+{
+	isVictory = true;
 }
 
 

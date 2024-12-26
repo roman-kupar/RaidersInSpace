@@ -2,7 +2,8 @@
 #include <iostream>
 
 Entity::Entity(ResourceManager::Texture textureID, Type type, World& world, unsigned int healthMax, unsigned int currentHealth)
-    : type(type), world(world), toRemove(false), hited(false), toExplode(false), hitIterator(0), explosionIterator(0), currentHealth(currentHealth), toPlayExplodeSound(false), ExplodeSoundIsNotPlaying(true)
+    : type(type), world(world), toRemove(false), hited(false), toExplode(false), hitIterator(0), explosionIterator(0), currentHealth(currentHealth), toPlayExplodeSound(false), ExplodeSoundIsNotPlaying(true),
+    immunity(false)
 {
     const sf::Texture& texture = ResourceManager::textures.at(textureID);
     const sf::Texture& hitTexture = ResourceManager::textures.at(ResourceManager::Texture::Hit);
@@ -117,24 +118,39 @@ void Entity::animateHit()
 
 void Entity::whenHit()
 {
-    if (hited)
+    //else
+    //    immunity = false;
+
+    if (immunity == true && oneSecondImmnunity.getElapsedTime().asSeconds() > 1.f)
+    {
+        immunity = false;
+        hited = false;
+    }
+
+    if (hited && !immunity)
     {
         hitSound.play();
-
+         
         if (toFlipHit.getElapsedTime().asSeconds() > 0.04f)
         {
             animateHit();
             hit.setPosition(getPosition().x, getPosition().y);
             hitIterator++;
 
-            if (hitIterator >= 4)
+            toFlipHit.restart();
+
+            if (hitIterator >= 5)
             {
                 hitIterator = 0;
                 currentHealth--;
                 hited = false;
-            }
 
-            toFlipHit.restart();
+                if (type==Type::Player)
+                {
+                    immunity = true;
+                    oneSecondImmnunity.restart();
+                }
+            }
         }
     }
     if (!hited)
@@ -149,6 +165,7 @@ void Entity::whenHit()
                 toExplode = true;
         }
     }
+
 }
 
 void Entity::setScaleFactor(float factorX, float factorY)

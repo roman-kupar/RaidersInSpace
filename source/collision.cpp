@@ -19,16 +19,15 @@ bool Collision::CheckCircleCollision(const sf::Sprite& first, const sf::Sprite& 
 	return (horDistance * horDistance) + (vertDistance * vertDistance) <= (radius1 + radius2) * (radius1 + radius2);
 }
 
-
 void Collision::resolveCollision(Entity& first, Entity& second) {
 	sf::FloatRect rect1 = first.getSprite().getGlobalBounds();
 	sf::FloatRect rect2 = second.getSprite().getGlobalBounds();
 
 	bool dontMove1 = false, dontMove2 = false;
 
-	if (first.getType() == Entity::Type::BigAsteroid || first.getType() == Entity::Type::SmallAsteroid)
+	if (first.getType() == Entity::Type::BigAsteroid || first.getType() == Entity::Type::SmallAsteroid || first.getType() == Entity::Type::Boss) 
 		dontMove1 = true;
-	if (second.getType() == Entity::Type::BigAsteroid || second.getType() == Entity::Type::SmallAsteroid)
+	if (second.getType() == Entity::Type::BigAsteroid || second.getType() == Entity::Type::SmallAsteroid || second.getType() == Entity::Type::Boss)
 		dontMove2 = true;
 	if (first.getType() == Entity::Type::PlayerBullet || first.getType() == Entity::Type::EnemyBullet || 
 		second.getType() == Entity::Type::PlayerBullet || second.getType() == Entity::Type::EnemyBullet)
